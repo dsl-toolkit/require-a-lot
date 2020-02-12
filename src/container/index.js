@@ -13,4 +13,4 @@ module.exports = (parameters, results = {}, requireModuleInstance, infoList = {}
   })
   const notHiddenVariablesReaches = {}
   return require('./proxy/hidden-tags-proxy')(notHiddenVariablesReaches)(baseProxy, containerKindData, registeredKeys, keys)
-};
+}

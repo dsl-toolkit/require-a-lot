@@ -1,4 +1,4 @@
-const container = require('./app-container')
+const container = require('./app-container-factory')()
 module.exports = (requireModuleInstance) => function () {
   const dependentLibraries = arguments
   return require('dsl-framework').noPromises()(
