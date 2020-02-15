@@ -3,9 +3,9 @@ require('cowlog')()
 // const octokit = require('@octokit/rest')
 const token = '32cdd4128b64add24c69503b96a3cb9d307c7e88'
 
-const { createTokenAuth } = require("@octokit/auth-token");
-const { request } = require("@octokit/request");
-const { graphql } = require("@octokit/graphql");
+// const { createTokenAuth } = require("@octokit/auth-token");
+const { request } = require('@octokit/request');
+// const { graphql } = require("@octokit/graphql");
 const packages = require('./lib/get-packages');
 const pacageNames = packages.map(e=>require(`../${e}/package.json`).name);
 const diff = require('diff');
