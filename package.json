@@ -8,7 +8,7 @@
     "test-dev-unit": "npm run clean && node_modules/.bin/mocha --recursive tests/tests/unit/*-spec.js",
     "test-old": "npm run build && npm run test-compiled && npm run clean",
     "test": "node_modules/.bin/nyc --reporter=lcov --reporter=clover --reporter=text --cache npm run test-dev",
-    "test-project": "pwd && npm run license-check && node_modules/.bin/depcheck --ignores 'babel-preset-env,assert,chai,cowlog,require-dir' && npm run standard-fix",
+    "test-project": "pwd && npm run license-check && node_modules/.bin/depcheck --ignores 'babel-preset-env,assert,chai,dsl-toolkit,require-dir' && npm run standard-fix",
     "test-all": "npm run test-project && npm test",
     "test-all-dev": "npm run test-project && npm run test-dev",
     "test-compiled": "node_modules/mocha/bin/mocha --require babel-core/register --require babel-polyfill --recursive dist/tests/tests",
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/311ecode/cowlog.git"
+    "url": "git+https://github.com/311ecode/dsl-toolkit.git"
   },
   "keywords": [
     "require",
@@ -30,9 +30,9 @@
   "author": "Imre Toth",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/311ecode/cowlog/issues"
+    "url": "https://github.com/311ecode/dsl-toolkit/issues"
   },
-  "homepage": "https://github.com/311ecode/cowlog/tree/master/packages/require-a-lot",
+  "homepage": "https://github.com/311ecode/dsl-toolkit/tree/master/packages/require-a-lot",
   "dependencies": {
     "array-dsl": "^1.6.59",
     "camelcase": "^5.3.1",
