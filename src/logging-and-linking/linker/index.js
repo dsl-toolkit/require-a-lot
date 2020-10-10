@@ -2,6 +2,8 @@ const { linkerDir } = require('generic-text-linker')
 const { tokenize } = require('esprima')
 const fs = require('fs')
 const linker = require('../../linker')
+const util = require('util')
+
 
 module.exports = (parameters, msg, begin, end) => {
   const linkDirectory = parameters.arguments('linkDirectory', 'lastArgument')
@@ -26,6 +28,17 @@ module.exports = (parameters, msg, begin, end) => {
       }).map(entry => entry.value)
         .map(declaredVariables => modifiedContent.filter(entry => declaredVariables === entry.value))
     })
+    // console.log(perFileVariableAllUses)
+
+    // linkerResultsKeys.forEach((e,i)=>{
+    //     console.log(e, util.inspect(perFileVariableAllUses[i], {showHidden: false, depth: null}))
+    // })
+
+    // console.log(
+    //   util.inspect(linkerResultsKeys, {showHidden: false, depth: null}),
+    //   // util.inspect(perFileVariableAllUses, {showHidden: false, depth: null})
+    // )
+
 
     const perFileVariables = linkerResultsKeys.map((file, fileIndex) => {
       const fileResults = perFileVariableAllUses[fileIndex]
