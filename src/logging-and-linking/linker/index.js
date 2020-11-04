@@ -17,49 +17,53 @@ module.exports = (parameters, msg, begin, end) => {
   const linkerResults = linker(linkDirectory, begin, end, msg, emptySpaces)
   const linkerResultsKeys = linkerResults ? Object.keys(linkerResults) : []
   if (removeUnused) {
+    const rottenFiles = []
     const perFileVariableAllUses = linkerResultsKeys.map(file => {
-      const modifiedContent = tokenize(fs.readFileSync(file).toString())
-      const tokenizedMsg = tokenize(msg)
-
-      return tokenizedMsg.filter(entry => {
-        if (entry.type === 'Identifier') {
-          return entry
-        }
-      }).map(entry => entry.value)
+      let modifiedContent, tokenizedMsg
+      try {
+        modifiedContent = tokenize(fs.readFileSync(file).toString())
+        tokenizedMsg = tokenize(msg)
+      }
+      catch (e) {
+        rottenFiles.push(file);
+      }
+      if(tokenizedMsg){
+        return tokenizedMsg.filter(entry => {
+          if (entry.type === 'Identifier') {
+            return entry
+          }
+        }).map(entry => entry.value)
         .map(declaredVariables => modifiedContent.filter(entry => declaredVariables === entry.value))
+
+      }
     })
-    // console.log(perFileVariableAllUses)
-
-    // linkerResultsKeys.forEach((e,i)=>{
-    //     console.log(e, util.inspect(perFileVariableAllUses[i], {showHidden: false, depth: null}))
-    // })
-
-    // console.log(
-    //   util.inspect(linkerResultsKeys, {showHidden: false, depth: null}),
-    //   // util.inspect(perFileVariableAllUses, {showHidden: false, depth: null})
-    // )
-
 
     const perFileVariables = linkerResultsKeys.map((file, fileIndex) => {
-      const fileResults = perFileVariableAllUses[fileIndex]
-      const variables = fileResults.map(fileResult => {
-        const name = fileResult[0].value
-        const used = fileResult.length - 1
-        return {name, used}
-      }).filter(entity => !entity.used).map(entity => entity.name)
+      let variables
+      if (!rottenFiles.includes(file)){
+        const fileResults = perFileVariableAllUses[fileIndex]
+        variables = fileResults.map(fileResult => {
+          const name = fileResult[0].value
+          const used = fileResult.length - 1
+          return {name, used}
+        }).filter(entity => !entity.used).map(entity => entity.name)
+
+      }
 
       return variables
     })
 
     linkerResultsKeys.map((file, fileIndex) => {
-      const unusedVariables = perFileVariables[fileIndex]
-      let msgArray = msg.split('\n')
+      if(!rottenFiles.includes(file)){
+        const unusedVariables = perFileVariables[fileIndex]
+        let msgArray = msg.split('\n')
 
-      unusedVariables.forEach(variableName => {
-        msgArray = msgArray.filter(line => !line.trim().startsWith(variableName))
-      })
+        unusedVariables.forEach(variableName => {
+          msgArray = msgArray.filter(line => !line.trim().startsWith(variableName))
+        })
 
-      linker(file, begin, end, require('../prepare-before-placement')(msgArray.join('\n')), emptySpaces)
+        linker(file, begin, end, require('../prepare-before-placement')(msgArray.join('\n')), emptySpaces)
+      }
     })
   }
 }
