@@ -10,6 +10,7 @@ module.exports = requireALot(require)(
   .alias('../../src', 'requireALot')
   .information('requireALot', 'The main library itself.')
 
+  .define( 'anotherTestData', 'test')
   .define('isNyc', !!isNyc)
   .information('isNyc', 'true if nyc is turned on')
 

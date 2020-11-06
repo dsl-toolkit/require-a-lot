@@ -2,10 +2,9 @@ const { linkerDir } = require('generic-text-linker')
 const { tokenize } = require('esprima')
 const fs = require('fs')
 const linker = require('../../linker')
-const util = require('util')
+let executedTimes = 0
 
-
-module.exports = (parameters, msg, begin, end) => {
+module.exports = (parameters, dependenciesJsCode, begin, end) => {
   const linkDirectory = parameters.arguments('linkDirectory', 'lastArgument')
   const removeUnused = parameters.command.has('removeUnused')
   const originalContent = linkerDir(linkDirectory, begin, end)
@@ -14,27 +13,34 @@ module.exports = (parameters, msg, begin, end) => {
     const trimmedOne = originalFirstLine.trim()
     return new Array(originalFirstLine.length - trimmedOne.length + 1).join(' ')
   })() : ''
-  const linkerResults = linker(linkDirectory, begin, end, msg, emptySpaces)
+  const linkerResults = linker(linkDirectory, begin, end, dependenciesJsCode, emptySpaces)
   const linkerResultsKeys = linkerResults ? Object.keys(linkerResults) : []
+
   if (removeUnused) {
+    executedTimes++
     const rottenFiles = []
-    const perFileVariableAllUses = linkerResultsKeys.map(file => {
-      let modifiedContent, tokenizedMsg
+    const perFileVariableAllUses = linkerResultsKeys.map(fileName => {
+      const inspect = fileName.includes('mencoder')
+      // if(!processedFiles.includes(fileName)){
+      // }
+
+      let modifiedContent, tokenizedDepedencies
       try {
-        modifiedContent = tokenize(fs.readFileSync(file).toString())
-        tokenizedMsg = tokenize(msg)
+        modifiedContent = tokenize(fs.readFileSync(fileName).toString())
+        tokenizedDepedencies = tokenize(dependenciesJsCode)
       }
       catch (e) {
-        rottenFiles.push(file);
+        rottenFiles.push(fileName);
       }
-      if(tokenizedMsg){
-        return tokenizedMsg.filter(entry => {
+      if(tokenizedDepedencies){
+        const relevantDependencies = tokenizedDepedencies.filter(entry => {
           if (entry.type === 'Identifier') {
             return entry
           }
         }).map(entry => entry.value)
         .map(declaredVariables => modifiedContent.filter(entry => declaredVariables === entry.value))
 
+        return relevantDependencies
       }
     })
 
@@ -56,7 +62,7 @@ module.exports = (parameters, msg, begin, end) => {
     linkerResultsKeys.map((file, fileIndex) => {
       if(!rottenFiles.includes(file)){
         const unusedVariables = perFileVariables[fileIndex]
-        let msgArray = msg.split('\n')
+        let msgArray = dependenciesJsCode.split('\n')
 
         unusedVariables.forEach(variableName => {
           msgArray = msgArray.filter(line => !line.trim().startsWith(variableName))
