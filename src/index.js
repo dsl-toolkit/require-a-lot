@@ -4,7 +4,6 @@ module.exports = (requireModuleInstance) => function () {
 const dependentLibraries = arguments
 return require('dsl-framework').noPromises()(
   (e, parameters) => {
-    // console.log(require('randomstring').generate(), "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
     const ralContainer = container
       .define('parameters', parameters)
       .define('requireModuleInstance', requireModuleInstance)
