@@ -12,7 +12,6 @@ module.exports = (parameters, results, infoList) => {
   })
 
   const maxLineWidth = parameters.arguments('maxLineWidth', 'lastArgument', 120)
-
   const tagCommon = tag ? `// [require-a-lot] ${tag}` : ''
   const begin = `${tagCommon} begin`
   const end = `${tagCommon} end`
