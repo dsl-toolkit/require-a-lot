@@ -1,8 +1,9 @@
+const linker = require('../../linker')
 const { linkerDir } = require('generic-text-linker')
 const { tokenize } = require('esprima')
 const fs = require('fs')
-const linker = require('../../linker')
 let executedTimes = 0
+const linkFile = require('./linkFile')
 
 module.exports = (parameters, dependenciesJsCode, begin, end) => {
   const linkDirectory = parameters.arguments('linkDirectory', 'lastArgument')
@@ -14,6 +15,7 @@ module.exports = (parameters, dependenciesJsCode, begin, end) => {
     return new Array(originalFirstLine.length - trimmedOne.length + 1).join(' ')
   })() : ''
   const linkerResults = linker(linkDirectory, begin, end, dependenciesJsCode, emptySpaces)
+
   const linkerResultsKeys = linkerResults ? Object.keys(linkerResults) : []
 
   if (removeUnused) {
@@ -67,8 +69,7 @@ module.exports = (parameters, dependenciesJsCode, begin, end) => {
         unusedVariables.forEach(variableName => {
           msgArray = msgArray.filter(line => !line.trim().startsWith(variableName))
         })
-
-        linker(file, begin, end, require('../prepare-before-placement')(msgArray.join('\n')), emptySpaces)
+        linkFile(file, begin, end, msgArray, emptySpaces)
       }
     })
   }

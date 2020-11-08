@@ -1,6 +1,7 @@
 const {getInstalledPathSync} = require('get-installed-path')
 const path = require('path')
 const camelCase = require('camelcase')
+const collectPackageInfo = require('./collectPackageInfo')
 
 module.exports = (ralContainer, localPath, name, infoListIndex, libraryToRequire) => {
   const { parameters, infoList } = ralContainer
@@ -19,20 +20,10 @@ module.exports = (ralContainer, localPath, name, infoListIndex, libraryToRequire
       // noPackageInfo.push(name)
       infoList[camelCaseName] = {
         head: `*node module*: ${libraryToRequire}`,
-        homepage: `https://nodejs.org/api/${camelCaseName}.html`
+        homepage: `https://nodejs.org/api/${name}.html`
       }
     })()
-    let infoData = ''
-
-    probablyNodeModule || (() => {
-      const module = require(filePath)
-      let homepage = module.homepage
-      let description = module.description
-      homepage = homepage ? `${homepage}` : 'no homepage'
-      description = description ? `${description}` : 'no description'
-      infoData = info ? `${module.name}@${module.version} | ${homepage} | ${description}` : ''
-      infoList[camelCase(infoListIndex)] = {head: `${module.name}@${module.version}`, homepage, description}
-    })()
+    const infoData = collectPackageInfo(probablyNodeModule, filePath, info, infoList, infoListIndex)
 
     require('./from')(ralContainer, name, infoData)
     require('./alias')(ralContainer, name, infoData)
