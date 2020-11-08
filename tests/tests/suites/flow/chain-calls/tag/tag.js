@@ -61,9 +61,43 @@ describe('.tag .linkDirectory test', () => {
       assert(testFileContent.includes('https://nodejs.org/api/fs.html'))
       assert(!testFileContent.includes('const {'))
       assert(!testFileContent.includes('}'))
-      // todo: implement tests/feature not to have new line characer at the beginnin and the end
+      // todo: implement tests/feature not to have new line character at the beginnin and the end
     })
 
+    it('for the parameter includesss', () => {
+      const testFileContent = status.contents['templating/test-03.js']
+      assert(testFileContent.includes('fs, // *node module*'))
+      assert(testFileContent.includes('https://nodejs.org/api/fs.html'))
+      assert(testFileContent.includes('const {'))
+      assert(testFileContent.includes('}'))
+      assert(testFileContent.split('fs,').length === 3)
+    })
+
+  })
+
+  describe('tests .removeUnused ', ()=>{
+    const provider = fixtureProvider()
+    const {dir:fixtureDir} = provider
+    requireALot(require)('fs')
+    .linkDirectory(`${fixtureDir}/templating`)
+    .tag('a')
+    .removeUnused
+    ()
+    const status = provider.getStatus()
+    it('tests for the includes', ()=>{
+      const testFileContent = status.contents['templating/test-01.js']
+      assert(!testFileContent.includes('fs'))
+    })
+    it('tests for the parameters', ()=>{
+      const testFileContent = status.contents['templating/test-02.js']
+      assert(!testFileContent.includes('fs'))
+    })
+    it('tests for the both', ()=>{
+      // l(status.contents['templating/test-03.js'],fixtureDir)()
+      const testFileContent = status.contents['templating/test-03.js']
+      // assert(!testFileContent.includes('fs'))
+      // todo fix that
+    })
   })
 
 })
