@@ -1,8 +1,8 @@
 const arrayDsl = require('array-dsl')
 const compare = require('compare')
+const messagePieces = require('./messagePieces')
+
 module.exports = (parameters, results, infoList) => {
-  const tag = parameters.arguments('tag', 'lastArgument')
-  const info = parameters.command.has('info') || parameters.command.has('vertical')
   parameters.arguments('information', 'allEntries', [[]]).forEach(e => {
     const description = { description: e[1] }
     const conainerEntries = arrayDsl(e[0]).arrify()
@@ -10,19 +10,11 @@ module.exports = (parameters, results, infoList) => {
       infoList[entry] = infoList[entry] ? Object.assign(infoList[entry], description) : description
     })
   })
+  const {
+    maxLineWidth, begin, end, tagOpen, tagEnd, tagEqual, noTagEqual, listDelimiter, lastLineDelimiter,
+    // tag, info, log
+  } = messagePieces(parameters)
 
-  const maxLineWidth = parameters.arguments('maxLineWidth', 'lastArgument', 120)
-  const tagCommon = tag ? `// [require-a-lot] ${tag}` : ''
-  const begin = `${tagCommon} begin`
-  const end = `${tagCommon} end`
-  const tagOpen = tag ? `${begin}\n` : ''
-  const tagEnd = tag ? `\n${end}` : ''
-  const tagEqual = tag ? '\n=' : ''
-  const noTagEqual = tag ? '' : '='
-
-  const logType = info || tag ? 'vertical' : parameters.arguments('log', 'lastArgument', 'horizontal')
-  const listDelimiter = ((type) => type === 'vertical' ? '\n' : ' ')(logType)
-  const lastLineDelimiter = ((type) => type === 'vertical' ? '' : '/n')(logType)
   let msg = `const {${listDelimiter}`
   const resultsKeys = Object.keys(results).sort(compare)
 
