@@ -13,6 +13,7 @@ const linking = (linkFile, begin, end, msg, emptySpaces) => {
     : {}
 }
 const prepareMsgAsParameters = (msg) => {
+  msg = msg.replace("const {", '').replace("}", '')
   return msg
 }
 

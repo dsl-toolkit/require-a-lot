@@ -1,14 +1,19 @@
+const {join} = require ('path');
 const requireALot = require('../../src');
 const isNyc = process.env.NYC_ROOT_ID;
 let anInstanceOfTheCowlog = 'an instance of the cowlog';
 
 module.exports = requireALot(require)(
-  '../lib/console-capture', 'assert', 'cowlog', '../../src', 'require-dir', 'path', 'generic-text-linker')
+  '../lib/console-capture', 'assert', 'cowlog', '../../src', 'require-dir', 'path', 'generic-text-linker', 'directory-fixture-provider'
+)
 
   .from('chai', ['expect'])
 
   .alias('../../src', 'requireALot')
+  .alias('dfp', 'directory-fixture-provider')
   .information('requireALot', 'The main library itself.')
+
+  .define('fixturesPath', join(__dirname, '..', 'assets/testFixture'))
 
   .define( 'anotherTestData', 'test')
   .define('isNyc', !!isNyc)
@@ -23,7 +28,7 @@ module.exports = requireALot(require)(
 
   .compose('l', logger => logger)
 
-  .linkDirectory(require('path').join(__dirname, '../', 'tests'))
+  .linkDirectory(join(__dirname, '../', 'tests'))
   .log.info.tag('testRequires')
 
   .compose('assetDir', (path) => path.join(__dirname, '../assets'))
