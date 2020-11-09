@@ -41,7 +41,7 @@ describe('.tag .linkDirectory test', () => {
     const provider = fixtureProvider()
     const {dir:fixtureDir} = provider
     requireALot(require)('fs')
-    .linkDirectory(`${fixtureDir}/templating`)
+    .linkDirectory(`${fixtureDir}templating`)
     .tag('a')
     ()
     const status = provider.getStatus()
@@ -79,25 +79,27 @@ describe('.tag .linkDirectory test', () => {
     const provider = fixtureProvider()
     const {dir:fixtureDir} = provider
     requireALot(require)('fs')
-    .linkDirectory(`${fixtureDir}/templating`)
+    .linkDirectory(`${fixtureDir}templating`)
     .tag('a')
     .removeUnused
     ()
     const status = provider.getStatus()
+
     it('tests for the includes', ()=>{
       const testFileContent = status.contents['templating/test-01.js']
       assert(!testFileContent.includes('fs'))
     })
+
     it('tests for the parameters', ()=>{
       const testFileContent = status.contents['templating/test-02.js']
       assert(!testFileContent.includes('fs'))
     })
-    it('tests for the both', ()=>{
-      // l(status.contents['templating/test-03.js'],fixtureDir)()
-      const testFileContent = status.contents['templating/test-03.js']
-      // assert(!testFileContent.includes('fs'))
-      // todo fix that
-    })
-  })
 
+    it('tests for the both', ()=>{
+      const testFileContent = status.contents['templating/test-03.js'] || ''
+      // l(testFileContent, `${fixtureDir}templating`).die()
+      assert(!testFileContent.includes('fs'))
+    })
+
+  })
 })
