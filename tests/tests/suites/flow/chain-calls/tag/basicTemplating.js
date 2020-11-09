@@ -15,7 +15,7 @@ const fixtureProvider = () => {
   return fixture
 }
 
-describe('.tag .linkDirectory test', () => {
+describe('.tag .linkDirectory Basic templating tests', () => {
 
   it('should not change anything', () => {
     const provider = fixtureProvider()
@@ -55,7 +55,7 @@ describe('.tag .linkDirectory test', () => {
       assert(testFileContent.includes('{\n  fs,'))
     })
 
-    it('for the parameter includes', () => {
+    it('tests for parameter type includes', () => {
       const testFileContent = status.contents['templating/test-02.js']
       assert(testFileContent.includes('fs, // *node module*'))
       assert(testFileContent.includes('https://nodejs.org/api/fs.html'))
@@ -64,7 +64,7 @@ describe('.tag .linkDirectory test', () => {
       // todo: implement tests/feature not to have new line character at the beginnin and the end
     })
 
-    it('for the parameter includesss', () => {
+    it('for both ins the same template', () => {
       const testFileContent = status.contents['templating/test-03.js']
       assert(testFileContent.includes('fs, // *node module*'))
       assert(testFileContent.includes('https://nodejs.org/api/fs.html'))
@@ -75,7 +75,7 @@ describe('.tag .linkDirectory test', () => {
 
   })
 
-  describe('tests .removeUnused ', ()=>{
+  describe('tests .removeUnused ', () => {
     const provider = fixtureProvider()
     const {dir:fixtureDir} = provider
     requireALot(require)('fs')

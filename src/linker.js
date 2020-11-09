@@ -15,10 +15,12 @@ const linking = (linkFile, begin, end, msg, emptySpaces) => {
   return returnObject
 }
 
-const prepareMsgAsParameters = (msg) => {
-  msg = msg.replace("const {", '').replace("}", '')
-  return msg
-}
+const prepareMsgAsParameters = (msg) => msg.replace("const {\n", '').replace("\n}", '')
+  // .replace('\n', "")
+  // .split("").reverse().join("")
+  // .replace('\n', "")
+  // .split("").reverse().join("")
+
 
 module.exports = (linkFile, begin, end, msg, emptySpaces) => {
   const preparedMsg = begin.endsWith('parameters') ? prepareMsgAsParameters(msg) : msg
