@@ -1,4 +1,4 @@
 const linker = require('../../linker')
-module.exports = (file, begin, end, msgArray, emptySpaces) => {
-    linker(file, begin, end, require('../prepare-before-placement')(msgArray.join('\n')), emptySpaces)
+module.exports = (ralContainer) => (file, msg, emptySpaces, extraTag) => {
+    linker(ralContainer)(file, require('../prepare-before-placement')(msg), emptySpaces, extraTag)
 }

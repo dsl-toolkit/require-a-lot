@@ -15,15 +15,19 @@ const linking = (linkFile, begin, end, msg, emptySpaces) => {
   return returnObject
 }
 
-const prepareMsgAsParameters = (msg) => msg.replace("const {\n", '').replace("\n}", '')
-  // .replace('\n', "")
-  // .split("").reverse().join("")
-  // .replace('\n', "")
-  // .split("").reverse().join("")
+const prepareMsgAsParameters = (msg) => msg
+.replace("const {\n", '')
+.replace("\n}", '')
+// .replace("}", '')
+.trimRight()
 
-
-module.exports = (linkFile, begin, end, msg, emptySpaces) => {
+module.exports = (ralContainer) => (linkFile, msg, emptySpaces, extraTag) => {
+  const {messagePieces} = ralContainer
+  let {begin, end} = messagePieces
+  begin += extraTag
+  end += extraTag
   const preparedMsg = begin.endsWith('parameters') ? prepareMsgAsParameters(msg) : msg
+
   return linking(linkFile, begin, end, preparedMsg, emptySpaces)
 }
 

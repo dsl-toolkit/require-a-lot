@@ -5,6 +5,10 @@ const {
 }
 // [require-a-lot] testRequires end
   = require('../../../lib/requires')
+const basicInstance = () => require('../../../../src/app-container-factory')()
+.define('a', 'AAA')
+.compose('b', (a) => a)
+.create('c', (b, a) => ({b, a}))()
 
 describe('container tests', () => {
   it('tests .create .compose .define combo', () => {
@@ -39,15 +43,11 @@ describe('container tests', () => {
   })
 
   it('container existence test', () => {
-    assert(requireALot.container.container.define('a', 'AAA')().a === 'AAA')
+    assert(basicInstance().a === 'AAA')
   })
 
   describe('container hidden variables', () => {
-    const basicInstance = () => requireALot.container.container
-      .define('a', 'AAA')
-      .compose('b', (a) => a)
-      .create('c', (b, a) => ({b, a}))()
-    it('_define', () => {
+     it('_define', () => {
       const ff = basicInstance()
       assert(ff['_define'].a)
       assert(ff['_define'].a.kind === 'parameter')
@@ -76,7 +76,7 @@ describe('container tests', () => {
       })
       it('duplicates', () => {
         const ff = basicInstance()
-        const duplicateContentInThisContainer = requireALot.container.container
+        const duplicateContentInThisContainer = require('../../../../src/app-container-factory')()
           .define('a', 'AAA')
           .compose('b', (a) => a)
           .create('c', (b, a) => ({b, a}))

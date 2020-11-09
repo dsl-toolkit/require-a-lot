@@ -5,9 +5,9 @@ const fs = require('fs')
 let executedTimes = 0
 const linkFile = require('./linkFile')
 
-module.exports = (parameters, dependenciesJsCode, begin, end) => {
-  // l(sourceLinker.tags).die()
-  sourceLinker.tags.forEach(e=>{
+module.exports = (ralContainer) => (parameters, begin, end) => {
+  const text = require('../message-creator/textGenerator')(ralContainer)
+  sourceLinker.tags.forEach(extraTag=>{
     const linkDirectory = parameters.arguments('linkDirectory', 'lastArgument')
     const removeUnused = parameters.command.has('removeUnused')
     const originalContent = linkerDir(linkDirectory, begin, end)
@@ -16,10 +16,9 @@ module.exports = (parameters, dependenciesJsCode, begin, end) => {
       const trimmedOne = originalFirstLine.trim()
       return new Array(originalFirstLine.length - trimmedOne.length + 1).join(' ')
     })() : ''
-    const linkerResults = sourceLinker(linkDirectory, begin + e, end + e, dependenciesJsCode, emptySpaces)
+    const linkerResults = sourceLinker(ralContainer)(linkDirectory, text, emptySpaces, extraTag)
     const linkerResultsKeys = linkerResults ? Object.keys(linkerResults) : []
 
-    // l(linkerResultsKeys).die()
     if (removeUnused) {
       linkDirectory.includes('directory-fixture-provider-destination') &&
       executedTimes++
@@ -28,7 +27,7 @@ module.exports = (parameters, dependenciesJsCode, begin, end) => {
         let modifiedContent, tokenizedDepedencies
         try {
           modifiedContent = tokenize(fs.readFileSync(fileName).toString())
-          tokenizedDepedencies = tokenize(dependenciesJsCode)
+          tokenizedDepedencies = tokenize(text)
         }
         catch (e) {
           rottenFiles.push(fileName);
@@ -63,12 +62,12 @@ module.exports = (parameters, dependenciesJsCode, begin, end) => {
       linkerResultsKeys.map((file, fileIndex) => {
         if(!rottenFiles.includes(file)){
           const unusedVariables = perFileVariables[fileIndex]
-          let msgArray = dependenciesJsCode.split('\n')
-
+          let msgArray = text.split('\n')
+          const keys = []
           unusedVariables.forEach(variableName => {
             msgArray = msgArray.filter(line => !line.trim().startsWith(variableName))
           })
-          linkFile(file, begin + e, end + e, msgArray, emptySpaces)
+          linkFile(ralContainer)(file, msgArray.join('\n'), emptySpaces, extraTag)
         }
       })
     }
