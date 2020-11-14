@@ -1,8 +1,8 @@
 // [require-a-lot] testRequires begin
-const {
-  assert, // *node module*: assert | https://nodejs.org/api/assert.html |
-  requireALot // *alias* of ../../src | The main library itself. |
-}
+  const {
+    assert, // *node module*: assert | https://nodejs.org/api/assert.html |
+    requireALot, // *alias* of ../../src | The main library itself. |
+  }
 // [require-a-lot] testRequires end
   = require('../../../lib/requires')
 const basicInstance = () => require('../../../../src/app-container-factory')()

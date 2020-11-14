@@ -1,12 +1,12 @@
 const textGenerator = require('./message-creator/textGenerator')
-module.exports = (ralContainer) => {
-  const { parameters, messagePieces, begin, end} = ralContainer
+module.exports = (ralContainer) => (includeThese = false) => {
+  const { parameters, messagePieces } = ralContainer
   require('./message-creator/mesaggeCommentFiller')(ralContainer)
-  const {tagOpen, tagEnd, tagEqual} = messagePieces
-  let msg = textGenerator(ralContainer)
+  const { tagOpen, tagEnd, tagEqual } = messagePieces
+  const msg = textGenerator(ralContainer)(includeThese)
 
   const consoleMessage = require('./prepare-before-placement')(tagOpen + msg + tagEnd + tagEqual)
   parameters.command.has('log') && console.log(consoleMessage)
 
-  require('./linker')(ralContainer)(parameters, begin, end)
+  require('./linker')(ralContainer)()
 }

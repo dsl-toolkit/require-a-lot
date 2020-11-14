@@ -1,7 +1,8 @@
 const compare = require('compare')
 
-module.exports = (ralContainer) => {
-  const {parameters, results, infoList} = ralContainer
+module.exports = (ralContainer) => (includeThese = false) => {
+  const results = includeThese ? includeThese : ralContainer.results
+  const {parameters, infoList} = ralContainer
   const { maxLineWidth, noTagEqual, listDelimiter, lastLineDelimiter} = require('./messagePieces')(parameters)
   const resultsKeys = Object.keys(results).sort(compare)
   let msg = `const {${listDelimiter}`

@@ -2,11 +2,13 @@ const sourceLinker = require('../../linker')
 const { linkerDir } = require('generic-text-linker')
 const { tokenize } = require('esprima')
 const fs = require('fs')
-let executedTimes = 0
 const linkFile = require('./linkFile')
+const arrayDsl = require('array-dsl')
 
-module.exports = (ralContainer) => (parameters, begin, end) => {
-  const text = require('../message-creator/textGenerator')(ralContainer)
+module.exports = (ralContainer) => {
+  const {parameters, messagePieces, results} = ralContainer
+  const {begin, end} = messagePieces
+  const text = require('../message-creator/textGenerator')(ralContainer)()
   sourceLinker.tags.forEach(extraTag=>{
     const linkDirectory = parameters.arguments('linkDirectory', 'lastArgument')
     const removeUnused = parameters.command.has('removeUnused')
@@ -20,8 +22,6 @@ module.exports = (ralContainer) => (parameters, begin, end) => {
     const linkerResultsKeys = linkerResults ? Object.keys(linkerResults) : []
 
     if (removeUnused) {
-      linkDirectory.includes('directory-fixture-provider-destination') &&
-      executedTimes++
       const rottenFiles = []
       const perFileVariableAllUses = linkerResultsKeys.map(fileName => {
         let modifiedContent, tokenizedDepedencies
@@ -32,7 +32,7 @@ module.exports = (ralContainer) => (parameters, begin, end) => {
         catch (e) {
           rottenFiles.push(fileName);
         }
-        if(tokenizedDepedencies){
+        if(!!tokenizedDepedencies) {
           const relevantDependencies = tokenizedDepedencies.filter(entry => {
             if (entry.type === 'Identifier') {
               return entry
@@ -60,14 +60,18 @@ module.exports = (ralContainer) => (parameters, begin, end) => {
       })
 
       linkerResultsKeys.map((file, fileIndex) => {
-        if(!rottenFiles.includes(file)){
+        if(!rottenFiles.includes(file)) {
           const unusedVariables = perFileVariables[fileIndex]
           let msgArray = text.split('\n')
           const keys = []
           unusedVariables.forEach(variableName => {
             msgArray = msgArray.filter(line => !line.trim().startsWith(variableName))
           })
-          linkFile(ralContainer)(file, msgArray.join('\n'), emptySpaces, extraTag)
+          // l(msgArray,arrayDsl(unusedVariables).xor(results)()).die()
+          linkFile(ralContainer)(file, arrayDsl(unusedVariables).xor(results)(), emptySpaces, extraTag)
+        }
+        else {
+          l()
         }
       })
     }

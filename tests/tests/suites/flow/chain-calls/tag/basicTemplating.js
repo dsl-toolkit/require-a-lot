@@ -94,6 +94,7 @@ describe('.tag .linkDirectory Basic templating tests', () => {
 
     it('tests for the parameters', ()=>{
       const testFileContent = status.contents['templating/test-02.js']
+      l(status, fixtureDir).die()
       assert(!testFileContent.includes('fs'))
       assert(!testFileContent.includes('{'))
       // l(testFileContent).die()
